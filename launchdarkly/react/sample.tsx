@@ -14,29 +14,18 @@
  * limitations under the License.
  */
 
-import { LDClient } from "launchdarkly-js-client-sdk";
+import { StatsigClient } from "@statsig/js-client";
 
 const Header = () => {
-	const ldClient = LDClient.initialize("YOUR_CLIENT_SIDE_ID", {
+    const ldClient = new StatsigClient("YOUR_CLIENT_SIDE_ID", {
 		key: "user_key",
 		name: "User Name",
 	});
-	const user = LDClient.User({
-		key: "user_key",
-		name: "User Name",
-	});
-	const isDarkModeEnabled = ldClient.variation(
-		"is-dark-mode-enabled",
-		user,
-		false,
-	);
-	const enableHighContrast = ldClient.variation(
-		"enable-high-contrast",
-		user,
-		true,
-	);
+    await ldClient.initializeAsync();
+    const isDarkModeEnabled = ldClient.checkGate("is-dark-mode-enabled") ?? false;
+    const enableHighContrast = ldClient.checkGate("enable-high-contrast") ?? true;
 
-	return (
+    return (
 		<div
 			style={
 				isDarkModeEnabled
